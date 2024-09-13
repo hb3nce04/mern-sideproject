@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"build": "cd frontend && npm run build",
-		"start": "SET NODE_ENV=production && npm run start --prefix backend",
-		"dev": "concurrently \"cd backend && SET NODE_ENV=development && npm run dev\" \"cd frontend && npm run dev\""
+		"build": "concurrently \"cd backend && npm run build\" \"cd frontend && npm run build\"",
+		"start": "npm run start --prefix backend",
+		"dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
 	},
 	"author": "hb3nce04",
 	"license": "ISC",
