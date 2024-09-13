@@ -1,24 +1,27 @@
-import { useState } from "react";
 import {
-	Box,
 	Button,
-	Container,
-	Heading,
 	Input,
-	useColorModeValue,
+	Modal,
+	ModalBody,
+	ModalCloseButton,
+	ModalContent,
+	ModalFooter,
+	ModalHeader,
+	ModalOverlay,
 	useToast,
 	VStack
 } from "@chakra-ui/react";
-import { useProductStore } from "../store/product";
+import { useState } from "react";
+import { useProductStore } from "../../store/product";
 
-function CreatePage() {
+const CreateProduct = ({ disclosure: { isOpen, onClose } }) => {
+	const { createProduct } = useProductStore();
 	const [newProduct, setNewProduct] = useState({
 		name: "",
 		price: 0,
 		image: ""
 	});
 	const toast = useToast();
-	const { createProduct } = useProductStore();
 
 	const handleAddProduct = async () => {
 		const { success, message } = await createProduct(newProduct);
@@ -41,19 +44,12 @@ function CreatePage() {
 	};
 
 	return (
-		<Container maxW={"container.sm"}>
-			<VStack spacing={8}>
-				<Heading as={"h1"} size={"2xl"} textAlign={"center"} mb={8}>
-					Create New Product 🛒
-				</Heading>
-
-				<Box
-					w={"full"}
-					bg={useColorModeValue("white", "gray.800")}
-					p={6}
-					rounded={"lg"}
-					shadow={"md"}
-				>
+		<Modal isOpen={isOpen} onClose={onClose}>
+			<ModalOverlay />
+			<ModalContent>
+				<ModalHeader>Create Product</ModalHeader>
+				<ModalCloseButton />
+				<ModalBody>
 					<VStack spacing={4}>
 						<Input
 							placeholder="Product Name"
@@ -89,18 +85,23 @@ function CreatePage() {
 								})
 							}
 						/>
-						<Button
-							colorScheme="blue"
-							onClick={handleAddProduct}
-							w="full"
-						>
-							Add Product
-						</Button>
 					</VStack>
-				</Box>
-			</VStack>
-		</Container>
+				</ModalBody>
+				<ModalFooter>
+					<Button
+						colorScheme="blue"
+						mr={3}
+						onClick={handleAddProduct}
+					>
+						Add
+					</Button>
+					<Button variant="ghost" onClick={onClose}>
+						Cancel
+					</Button>
+				</ModalFooter>
+			</ModalContent>
+		</Modal>
 	);
-}
+};
 
-export default CreatePage;
+export default CreateProduct;

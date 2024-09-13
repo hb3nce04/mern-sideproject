@@ -1,81 +1,25 @@
 import {
 	Box,
-	Button,
 	Heading,
 	HStack,
 	IconButton,
 	Image,
-	Input,
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
 	Text,
 	useColorModeValue,
-	useDisclosure,
-	useToast,
-	VStack
+	useDisclosure
 } from "@chakra-ui/react";
 
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { useProductStore } from "../store/product";
-import { useState } from "react";
+import EditProduct from "./modals/EditProduct";
+import DeleteProduct from "./modals/DeleteProduct";
 
 const ProductCard = ({ product }) => {
-	const [updatedProduct, setUpdatedProduct] = useState(product);
+	const editModal = useDisclosure();
+	const deleteModal = useDisclosure();
+
 	const textColor = useColorModeValue("gray.600", "gray.200");
 	const bg = useColorModeValue("white", "gray.800");
-
-	const { updateProduct, deleteProduct } = useProductStore();
-	const toast = useToast();
-	const { isOpen, onOpen, onClose } = useDisclosure();
-
-	const handleUpdateProduct = async (id, updatedProduct) => {
-		const { success, message } = await updateProduct(id, updatedProduct);
-		if (success) {
-			toast({
-				title: "Success",
-				description: "Product updated successfully",
-				status: "success",
-				duration: 3000,
-				isClosable: true
-			});
-		} else {
-			toast({
-				title: "Error",
-				description: message,
-				status: "error",
-				duration: 3000,
-				isClosable: true
-			});
-		}
-		onClose();
-	};
-
-	const handleDeleteProduct = async (id) => {
-		const { success, message } = await deleteProduct(id);
-		if (success) {
-			toast({
-				title: "Success",
-				description: message,
-				status: "success",
-				duration: 3000,
-				isClosable: true
-			});
-		} else {
-			toast({
-				title: "Error",
-				description: message,
-				status: "error",
-				duration: 3000,
-				isClosable: true
-			});
-		}
-	};
 
 	return (
 		<Box
@@ -103,75 +47,19 @@ const ProductCard = ({ product }) => {
 				<HStack spacing={2}>
 					<IconButton
 						icon={<FaEdit />}
-						onClick={onOpen}
+						onClick={editModal.onOpen}
 						colorScheme="blue"
 					/>
 					<IconButton
 						icon={<MdDelete />}
-						onClick={() => handleDeleteProduct(product._id)}
+						onClick={deleteModal.onOpen}
 						colorScheme="red"
 					/>
 				</HStack>
 			</Box>
-			<Modal isOpen={isOpen} onClose={onClose}>
-				<ModalOverlay />
-				<ModalContent>
-					<ModalHeader>Update Product</ModalHeader>
-					<ModalCloseButton />
-					<ModalBody>
-						<VStack spacing={4}>
-							<Input
-								placeholder="Product Name"
-								name="name"
-								value={updatedProduct.name}
-								onChange={(e) =>
-									setUpdatedProduct({
-										...updatedProduct,
-										name: e.target.value
-									})
-								}
-							/>
-							<Input
-								placeholder="Price"
-								name="price"
-								type="number"
-								value={updatedProduct.price}
-								onChange={(e) =>
-									setUpdatedProduct({
-										...updatedProduct,
-										price: e.target.value
-									})
-								}
-							/>
-							<Input
-								placeholder="Image URL"
-								name="image"
-								value={updatedProduct.image}
-								onChange={(e) =>
-									setUpdatedProduct({
-										...updatedProduct,
-										image: e.target.value
-									})
-								}
-							/>
-						</VStack>
-					</ModalBody>
-					<ModalFooter>
-						<Button
-							colorScheme="blue"
-							mr={3}
-							onClick={() =>
-								handleUpdateProduct(product._id, updatedProduct)
-							}
-						>
-							Update
-						</Button>
-						<Button variant="ghost" onClick={onClose}>
-							Cancel
-						</Button>
-					</ModalFooter>
-				</ModalContent>
-			</Modal>
+			{/* Modals */}
+			<EditProduct disclosure={editModal} product={product} />
+			<DeleteProduct disclosure={deleteModal} product={product} />
 		</Box>
 	);
 };

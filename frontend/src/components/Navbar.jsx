@@ -4,15 +4,19 @@ import {
 	Flex,
 	HStack,
 	Text,
-	useColorMode
+	useColorMode,
+	useDisclosure
 } from "@chakra-ui/react";
 
 import { Link } from "react-router-dom";
 
 import { FaPlusSquare, FaMoon, FaSun } from "react-icons/fa";
+import CreateProduct from "./modals/CreateProduct";
 
 function Navbar() {
 	const { colorMode, toggleColorMode } = useColorMode();
+
+	const createModal = useDisclosure();
 
 	return (
 		<Container maxW={"1140px"} px={4}>
@@ -23,7 +27,7 @@ function Navbar() {
 				flexDir={{ base: "column", sm: "row" }}
 			>
 				<Text
-					fontSize={{ base: "22", sm: "28" }}
+					fontSize={{ base: "22", sm: "26" }}
 					fontWeight={"bold"}
 					textTransform={"uppercase"}
 					textAlign={"center"}
@@ -33,16 +37,15 @@ function Navbar() {
 					<Link to={"/"}>Product Store 🛒</Link>
 				</Text>
 				<HStack spacing={2} alignItems={"center"}>
-					<Link to={"/create"}>
-						<Button mx={1}>
-							<FaPlusSquare fontSize={20} />
-						</Button>
-					</Link>
+					<Button mx={1} onClick={createModal.onOpen}>
+						<FaPlusSquare fontSize={20} />
+					</Button>
 					<Button mx={1} onClick={toggleColorMode}>
 						{colorMode === "light" ? <FaMoon /> : <FaSun />}
 					</Button>
 				</HStack>
 			</Flex>
+			<CreateProduct disclosure={createModal} />
 		</Container>
 	);
 }
