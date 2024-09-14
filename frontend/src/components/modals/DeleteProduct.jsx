@@ -10,27 +10,25 @@ import {
 	Text,
 	useToast
 } from "@chakra-ui/react";
-import { useProductStore } from "../../store/product";
+import axios from "../../utils/axios";
 
 const DeleteProduct = ({ product, disclosure: { isOpen, onClose } }) => {
-	const { deleteProduct } = useProductStore();
-
 	const toast = useToast();
 
 	const handleDeleteProduct = async () => {
-		const { success, message } = await deleteProduct(product._id);
-		if (success) {
+		try {
+			await axios.delete(`/products/${product._id}`);
 			toast({
 				title: "Success",
-				description: message,
+				description: "Product deleted successfully",
 				status: "success",
 				duration: 3000,
 				isClosable: true
 			});
-		} else {
+		} catch (error) {
 			toast({
 				title: "Error",
-				description: message,
+				description: error.message,
 				status: "error",
 				duration: 3000,
 				isClosable: true

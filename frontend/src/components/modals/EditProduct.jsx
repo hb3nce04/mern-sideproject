@@ -12,36 +12,36 @@ import {
 	VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useProductStore } from "../../store/product";
+import axios from "../../utils/axios";
 
 const EditProduct = ({ product, disclosure: { isOpen, onClose } }) => {
-	const { updateProduct } = useProductStore();
 	const [updatedProduct, setUpdatedProduct] = useState(product);
 	const toast = useToast();
 
 	const handleUpdateProduct = async (updatedProduct) => {
-		const { success, message } = await updateProduct(
-			product._id,
-			updatedProduct
-		);
-		if (success) {
-			toast({
-				title: "Success",
-				description: "Product updated successfully",
-				status: "success",
-				duration: 3000,
-				isClosable: true
+		await axios
+			.put(`/products/${product._id}`, updatedProduct)
+			.then(() => {
+				toast({
+					title: "Success",
+					description: "Product updated successfully",
+					status: "success",
+					duration: 3000,
+					isClosable: true
+				});
+			})
+			.catch((err) => {
+				toast({
+					title: "Error",
+					description: err.message,
+					status: "error",
+					duration: 3000,
+					isClosable: true
+				});
+			})
+			.finally(() => {
+				onClose();
 			});
-		} else {
-			toast({
-				title: "Error",
-				description: message,
-				status: "error",
-				duration: 3000,
-				isClosable: true
-			});
-		}
-		onClose();
 	};
 
 	return (

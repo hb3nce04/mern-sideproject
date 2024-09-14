@@ -8,22 +8,15 @@ import {
 	useDisclosure,
 	VStack
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useProductStore } from "../store/product";
 import ProductCard from "../components/ProductCard";
 import CreateProduct from "../components/modals/CreateProduct";
+import useSWR, { mutate } from "swr";
+import fetcher from "../utils/fetcher";
 
 function HomePage() {
-	const { fetchProducts, products } = useProductStore();
-
-	const [loading, setLoading] = useState(true);
+	const { data: products, error, isLoading } = useSWR(`/products`, fetcher);
 
 	const createModal = useDisclosure();
-
-	useEffect(() => {
-		fetchProducts();
-		setLoading(false);
-	}, [fetchProducts]);
 
 	return (
 		<Container maxW={"container.xl"}>
@@ -37,7 +30,7 @@ function HomePage() {
 					Current Products 🚀
 				</Heading>
 
-				<Skeleton fadeDuration={1} isLoaded={!loading}>
+				<Skeleton fadeDuration={1} isLoaded={!isLoading}>
 					<SimpleGrid
 						columns={{
 							base: 1,
@@ -47,12 +40,16 @@ function HomePage() {
 						spacing={10}
 						w={"full"}
 					>
-						{products.map((product) => (
-							<ProductCard key={product._id} product={product} />
-						))}
+						{products &&
+							products.map((product) => (
+								<ProductCard
+									key={product._id}
+									product={product}
+								/>
+							))}
 					</SimpleGrid>
 
-					{!loading && products.length === 0 && (
+					{products && products.length === 0 && (
 						<Text
 							fontSize="xl"
 							textAlign={"center"}

@@ -8,27 +8,28 @@ import {
 	ModalFooter,
 	ModalHeader,
 	ModalOverlay,
+	Textarea,
 	useToast,
 	VStack
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useProductStore } from "../../store/product";
+import axios from "../../utils/axios";
 
 const CreateProduct = ({ disclosure: { isOpen, onClose } }) => {
-	const { createProduct } = useProductStore();
 	const [newProduct, setNewProduct] = useState({
 		name: "",
 		price: 0,
-		image: ""
+		image: "",
+		description: ""
 	});
 	const toast = useToast();
 
 	const handleAddProduct = async () => {
-		const { success, message } = await createProduct(newProduct);
-		if (success) {
+		const { data } = await axios.post("/products", newProduct);
+		if (data.success) {
 			toast({
 				title: "Success",
-				description: message,
+				description: data.message,
 				status: "success",
 				isClosable: true
 			});
@@ -36,7 +37,7 @@ const CreateProduct = ({ disclosure: { isOpen, onClose } }) => {
 		} else {
 			toast({
 				title: "Error",
-				description: message,
+				description: data.message,
 				status: "error",
 				isClosable: true
 			});
@@ -82,6 +83,17 @@ const CreateProduct = ({ disclosure: { isOpen, onClose } }) => {
 								setNewProduct({
 									...newProduct,
 									image: e.target.value
+								})
+							}
+						/>
+						<Textarea
+							placeholder="Description"
+							name="description"
+							value={newProduct.description}
+							onChange={(e) =>
+								setNewProduct({
+									...newProduct,
+									description: e.target.value
 								})
 							}
 						/>

@@ -1,11 +1,12 @@
-import express, { Application, NextFunction, Request, Response } from "express";
+import express, { Application } from "express";
 import path from "path";
 
-import productRoutes from "./routes/product.route";
+import apiRoutes from "./routes/api.route";
 import morgan from "morgan";
 import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
+import rateLimit from "express-rate-limit";
 
 export default function createApp(): Application {
 	const app: Application = express();
@@ -19,8 +20,14 @@ export default function createApp(): Application {
 	app.use(helmet());
 	app.use(compression());
 	app.use(express.json());
+    app.use(
+        rateLimit({
+            windowMs: 5000,
+            max: 10
+        })
+    );
 
-	app.use("/api/products", productRoutes);
+	app.use("/api", apiRoutes);
 
 	if (process.env.NODE_ENV === "production") {
 		const __dirname = path.resolve();

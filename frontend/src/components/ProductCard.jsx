@@ -8,6 +8,7 @@ import {
 	useColorModeValue,
 	useDisclosure
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
@@ -29,14 +30,17 @@ const ProductCard = ({ product }) => {
 			transition="all 0.3s"
 			_hover={{ transform: "translateY(-5px)", shadow: "xl" }}
 			bg={bg}
+			cursor={"pointer"}
 		>
-			<Image
-				src={product.image}
-				alt={product.name}
-				h={48}
-				w="fulL"
-				objectFit="cover"
-			/>
+			<Link to={`/products/${product._id}`}>
+				<Image
+					src={product.image}
+					alt={product.name}
+					h={48}
+					w="fulL"
+					objectFit="cover"
+				/>
+			</Link>
 			<Box p={4}>
 				<Heading as="h3" size="md" mb={2}>
 					{product.name}
